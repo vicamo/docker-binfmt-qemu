@@ -1,14 +1,21 @@
 language: bash
-services: docker
 
 branches:
   only:
-  - master
+  - native
+
+addons:
+  apt:
+    packages:
+    - binfmt-support
+    - qemu-user-static
 
 script:
-  - docker build -t vicamo/binfmt-qemu:lastest .
-
-after_script:
-  - docker images
+  - |
+    for f in /proc/sys/fs/binfmt_misc/*; do \
+      if [ "${f##*/}" != "register" ]; then \
+        echo "#### $f ####"; cat "$f"; echo; \
+      fi; \
+    done
 
 # vim:set et ts=2 sw=2:
