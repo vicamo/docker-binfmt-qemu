@@ -5,13 +5,8 @@ branches:
   only:
   - native
 
-addons:
-  apt:
-    packages:
-    - binfmt-support
-    - qemu-user-static
-
 script:
+  - docker run --rm --privileged multiarch/qemu-user-static:register
   - |
     for f in /proc/sys/fs/binfmt_misc/*; do \
       if [ "${f##*/}" != "register" ]; then \
