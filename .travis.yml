@@ -8,6 +8,14 @@ branches:
 
 script:
   - docker build -t vicamo/binfmt-qemu:lastest .
+  - ls -al /proc/sys/fs/binfmt_misc
+  - docker run --rm --privileged vicamo/binfmt-qemu:latest
+  - |
+    for f in /proc/sys/fs/binfmt_misc/*; do \
+      if [ "${f##*/}" != "register" ]; then \
+        echo "#### $f ####"; cat "$f"; echo; \
+      fi; \
+    done
 
 after_script:
   - docker images
