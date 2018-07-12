@@ -6,6 +6,12 @@ branches:
   only:
   - master
 
+addons:
+  apt:
+    packages:
+    - binfmt-support
+    - qemu-user-static
+
 script:
   - docker build -t vicamo/binfmt-qemu:lastest .
   - ls -al /proc/sys/fs/binfmt_misc
