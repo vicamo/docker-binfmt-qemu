@@ -1,4 +1,4 @@
-FROM debian:testing
+FROM ubuntu:bionic
 
 MAINTAINER vicamo@gmail.com
 

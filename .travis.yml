@@ -2,20 +2,34 @@ language: bash
 sudo: required
 services: docker
 
+env:
+  matrix:
+  - DIST=debian SUITE=buster
+  - DIST=debian SUITE=jessie
+  - DIST=debian SUITE=sid
+  - DIST=debian SUITE=stretch
+  - DIST=ubuntu SUITE=artful
+  - DIST=ubuntu SUITE=bionic
+  - DIST=ubuntu SUITE=cosmic
+  - DIST=ubuntu SUITE=trusty
+  - DIST=ubuntu SUITE=xenial
+
+matrix:
+  fast_finish: true
+  allow_failures:
+  - env: DIST=debian SUITE=buster
+  - env: DIST=debian SUITE=sid
+  - env: DIST=ubuntu SUITE=cosmic
+
 branches:
   only:
   - master
 
 script:
-  - docker build -t vicamo/binfmt-qemu:lastest .
+  - docker build -t vicamo/binfmt-qemu:$SUITE $DIST/$SUITE
   - ls -al /proc/sys/fs/binfmt_misc
-  - docker run --rm --privileged vicamo/binfmt-qemu:latest
-  - |
-    for f in /proc/sys/fs/binfmt_misc/*; do \
-      if [ "${f##*/}" != "register" ]; then \
-        echo "#### $f ####"; cat "$f"; echo; \
-      fi; \
-    done
+  - docker run --rm --privileged vicamo/binfmt-qemu:$SUITE
+  - sudo update-binfmts --display
 
 after_script:
   - docker images
