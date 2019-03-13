@@ -1,4 +1,4 @@
-FROM ubuntu:artful
+FROM ubuntu:disco
 
 MAINTAINER vicamo@gmail.com
 

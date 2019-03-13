@@ -1,4 +1,5 @@
 language: bash
+dist: xenial
 sudo: required
 services: docker
 
@@ -8,18 +9,11 @@ env:
   - DIST=debian SUITE=jessie
   - DIST=debian SUITE=sid
   - DIST=debian SUITE=stretch
-  - DIST=ubuntu SUITE=artful
   - DIST=ubuntu SUITE=bionic
   - DIST=ubuntu SUITE=cosmic
+  - DIST=ubuntu SUITE=disco
   - DIST=ubuntu SUITE=trusty
   - DIST=ubuntu SUITE=xenial
-
-matrix:
-  fast_finish: true
-  allow_failures:
-  - env: DIST=debian SUITE=buster
-  - env: DIST=debian SUITE=sid
-  - env: DIST=ubuntu SUITE=cosmic
 
 branches:
   only:
