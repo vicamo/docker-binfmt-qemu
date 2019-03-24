@@ -4,14 +4,16 @@ sudo: required
 services: docker
 
 env:
+  global:
+  - secure: "JGhcSpIJahIpj9/XGi45xjYG22F0sE26th/5f1jLDB03Qe/mm2n6pM3Bc0XS23nw0wIstXqkIUVThb67SBS89Qu5lf5nSgG3n+4aOxT1YBXAoU6R9hGQKU3Ng0vzzwhpeV/AGaSY85QjPJvE6gQiZTDL68YXaQTjty3bHnMKzbPLmBiyuDdgNYhqgeVC9nHEyV4y440T7UURwJsg840AYznpxMMWEvxQp9KQaHY6VH1QMK8jky13oRqK+VZPxMqIw1A0es5waCFb4Y2Oym2H6Ykh4ETH6DmQ/0iozhrOpTuknkj0wAFafvotrN53DAvwd5LjQeL9bt55w0p0fctwOQJpt8SibWLaXI6Pa3s/LXkzM8Pkx5FyoLHwD51bkAlEqaCAt+5x2Ja/SUNCnfP87Ky/4uDSmaGNwwDrkDbj+4dlNSVzbX9zWzTQ4yaUe0CkhWFZ2d27pwQCb6XKxi7P/TK/I2Ori1hCljfPpWTn9RfO/xyI8B1GHTrtEVQiUR3yS+10zln4l6zPAkaFA7veEa4KUkKS5v5sqrV06WhCx6HALLzeQTRkn0g90AhiyXgZi13QxzU1D6EA4VviG/Kd5w5Yr27eJm+tx9ySFmbkwWdhEjFEGRXv4RkSi7N4shKInEBlAS4s6hzfHw7Yk/LOQyCwhqwG2R3l//+GvV7B5RE="
   matrix:
   - DIST=debian SUITE=buster
   - DIST=debian SUITE=jessie
   - DIST=debian SUITE=sid
   - DIST=debian SUITE=stretch
-  - DIST=ubuntu SUITE=bionic
-  - DIST=ubuntu SUITE=cosmic
-  - DIST=ubuntu SUITE=disco
+  - DIST=ubuntu SUITE=bionic ALIAS=latest
+  - DIST=ubuntu SUITE=cosmic ALIAS=rolling
+  - DIST=ubuntu SUITE=disco ALIAS=devel
   - DIST=ubuntu SUITE=trusty
   - DIST=ubuntu SUITE=xenial
 
@@ -20,12 +22,29 @@ branches:
   - master
 
 script:
-  - docker build -t vicamo/binfmt-qemu:$SUITE $DIST/$SUITE
+  - docker build -t ${DOCKER_USER}/binfmt-qemu:$SUITE $DIST/$SUITE
+  - if [ $DIST = "debian" ]; then
+      RELEASE_URL=https://deb.debian.org/debian/dists/${SUITE}/Release;
+      ALIAS=$(wget --quiet -O - ${RELEASE_URL} | grep ^Suite | cut -d ' ' -f2);
+    fi;
+    if [ -n "$ALIAS" ]; then
+      docker tag ${DOCKER_USER}/binfmt-qemu:$SUITE ${DOCKER_USER}/binfmt-qemu:$ALIAS;
+    fi;
+    docker images;
   - ls -al /proc/sys/fs/binfmt_misc
-  - docker run --rm --privileged vicamo/binfmt-qemu:$SUITE
+  - docker run --rm --privileged ${DOCKER_USER}/binfmt-qemu:$SUITE
   - sudo update-binfmts --display
 
 after_script:
-  - docker images
+- if [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then
+    docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}";
+    for image in $(docker images | grep ^${DOCKER_USER}/binfmt-qemu | awk '{print $1 ":" $2}'); do
+      docker push $image;
+    done
+  fi
+
+notifications:
+  slack:
+    secure: "AOdflQScD4Kq+7QMyMzNSSmmQIysmLYv2qgfKu8uQdlCv9kD0doJBWcE7yj5S7+Lg4rv6uZOmpknJt7HcvtfIYqiQ3xsbJ9vMSq2H0HdjLszkIpnjoxH39+qMdN1I2Z43jl8KKpbzYSEB1+77GF1/2gD/HR0909T6Kye6WQlQLOnqIwyFkHy+1XIaC/6Ha6UUXJszcw5TOY6ovcX+VT5A77SCvIc5st8U+4BI+4kg712GFXNv+iNdjGCwCnOXlAeAwvBXGu6HFNB0xhUIcWLSLdpbT1QHj8BUWEQITnw7n1gjXkM+yvbmUZH7OvWj+l1et3peEXt96dbnJFy6/oZygZdDMJn4pCgmgJFjGKzna3AL5LPJT6OMDqBSuY945ESIeX5afo5JvvC6F+veETu67oaA6oRs2a7VhxrxiwGXrzy8dJAvhDsHuIbpl4d9v4OkCOyNTq58Rvfn4x+y7SVl8bfM3VAouxAujj0fjK3CDJPRT+lp5HB/eyMDvAG+kaQAl5t1kwfIT6niE75ljClSOJ/dbTDDc7OwallEU5ZVvPhd1MT6Bg+CDiVYjG1gkU+5gGUEkJ0s/YZi0IqF2ml/HxW2xiao3vATA0LVf7NdMOOTxjbuz6iHPeL8NF+04dAN22aTg5stLf7ml3ZlE9YmvR1lB2z4aSRZAnz//G0rYo="
 
 # vim:set et ts=2 sw=2:
