@@ -11,9 +11,9 @@ env:
   - DIST=debian SUITE=jessie
   - DIST=debian SUITE=sid
   - DIST=debian SUITE=stretch
-  - DIST=ubuntu SUITE=bionic
-  - DIST=ubuntu SUITE=cosmic
-  - DIST=ubuntu SUITE=disco
+  - DIST=ubuntu SUITE=bionic ALIAS=latest
+  - DIST=ubuntu SUITE=cosmic ALIAS=rolling
+  - DIST=ubuntu SUITE=disco ALIAS=devel
   - DIST=ubuntu SUITE=trusty
   - DIST=ubuntu SUITE=xenial
 
@@ -23,6 +23,14 @@ branches:
 
 script:
   - docker build -t ${DOCKER_USER}/binfmt-qemu:$SUITE $DIST/$SUITE
+  - if [ $DIST = "debian" ]; then
+      RELEASE_URL=https://deb.debian.org/debian/dists/${SUITE}/Release;
+      ALIAS=$(wget --quiet -O - ${RELEASE_URL} | grep ^Suite | cut -d ' ' -f2);
+    fi;
+    if [ -n "$ALIAS" ]; then
+      docker tag ${DOCKER_USER}/binfmt-qemu:$SUITE ${DOCKER_USER}/binfmt-qemu:$ALIAS;
+    fi;
+    docker images;
   - ls -al /proc/sys/fs/binfmt_misc
   - docker run --rm --privileged ${DOCKER_USER}/binfmt-qemu:$SUITE
   - sudo update-binfmts --display
