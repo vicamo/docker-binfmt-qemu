@@ -4,6 +4,8 @@ sudo: required
 services: docker
 
 env:
+  global:
+  - secure: "JGhcSpIJahIpj9/XGi45xjYG22F0sE26th/5f1jLDB03Qe/mm2n6pM3Bc0XS23nw0wIstXqkIUVThb67SBS89Qu5lf5nSgG3n+4aOxT1YBXAoU6R9hGQKU3Ng0vzzwhpeV/AGaSY85QjPJvE6gQiZTDL68YXaQTjty3bHnMKzbPLmBiyuDdgNYhqgeVC9nHEyV4y440T7UURwJsg840AYznpxMMWEvxQp9KQaHY6VH1QMK8jky13oRqK+VZPxMqIw1A0es5waCFb4Y2Oym2H6Ykh4ETH6DmQ/0iozhrOpTuknkj0wAFafvotrN53DAvwd5LjQeL9bt55w0p0fctwOQJpt8SibWLaXI6Pa3s/LXkzM8Pkx5FyoLHwD51bkAlEqaCAt+5x2Ja/SUNCnfP87Ky/4uDSmaGNwwDrkDbj+4dlNSVzbX9zWzTQ4yaUe0CkhWFZ2d27pwQCb6XKxi7P/TK/I2Ori1hCljfPpWTn9RfO/xyI8B1GHTrtEVQiUR3yS+10zln4l6zPAkaFA7veEa4KUkKS5v5sqrV06WhCx6HALLzeQTRkn0g90AhiyXgZi13QxzU1D6EA4VviG/Kd5w5Yr27eJm+tx9ySFmbkwWdhEjFEGRXv4RkSi7N4shKInEBlAS4s6hzfHw7Yk/LOQyCwhqwG2R3l//+GvV7B5RE="
   matrix:
   - DIST=debian SUITE=buster
   - DIST=debian SUITE=jessie
@@ -20,12 +22,17 @@ branches:
   - master
 
 script:
-  - docker build -t vicamo/binfmt-qemu:$SUITE $DIST/$SUITE
+  - docker build -t ${DOCKER_USER}/binfmt-qemu:$SUITE $DIST/$SUITE
   - ls -al /proc/sys/fs/binfmt_misc
-  - docker run --rm --privileged vicamo/binfmt-qemu:$SUITE
+  - docker run --rm --privileged ${DOCKER_USER}/binfmt-qemu:$SUITE
   - sudo update-binfmts --display
 
 after_script:
-  - docker images
+- if [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then
+    docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}";
+    for image in $(docker images | grep ^${DOCKER_USER}/binfmt-qemu | awk '{print $1 ":" $2}'); do
+      docker push $image;
+    done
+  fi
 
 # vim:set et ts=2 sw=2:
