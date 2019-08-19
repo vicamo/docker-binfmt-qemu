@@ -7,13 +7,15 @@ env:
   global:
   - secure: "VwPavJERimyhuMJgB3G2BJ/HcsYWsFhI7OXJSU5hxio9+c0An1fjamiA7SCikdHa3DwBBs52jLyfTf4KSWac1ZlDEigL+Fe3/HIcS5+RbDBQGrtl45d60XlXHltPAj362s/iTjs1zowZ772uFAeYNod31NuuFs/OMyZDzFwrfCYwe406tlmttZ4cXgphW8sko6pDEzmCwgeomoCtF9UxiRJTvKHN/ApFU6gf3b0FHac4MIYx/FlG08PTLApvx8rsJiaP9LuS2b8NEaDGOxu9h1x/WJkHlaBjenrMkc8cYPHc1chS3zYjUUhEA4Ozbm5LJvTzjAdq9zHn2aJKA/ZgFCAad2W8jZnjG3NNJe5yxhVXf8LVPwTnku0eBD++hVUtk1MNqdSPuhuxrV0qjyZ402iEJGGYkxHoyYteyGKafI71QbMiIICnXNlYuA/CEDzs7jvvMnebh057Rt7gxl6HKO8BcrCJxpVDcDFJN72sAVqdoSpFz0Da/i+ENoHAffbjJ6Ht2m3ORuG12tnHpXp6T880Nzr+P21xBGyK31VjeDOfsBSe1HSmd9zCjCZCGJIHtbLD8C2M+mRhic3GJgf+St018bpBkGV4yrBzHgJuM3/QKMSTKrLU7mqDCfY0AN12QeemcSNczSjx1adhXspbY0p8x3aYflcpKZbxGhUDRSQ="
   matrix:
+  - DIST=debian SUITE=bullseye
   - DIST=debian SUITE=buster
   - DIST=debian SUITE=jessie
   - DIST=debian SUITE=sid
   - DIST=debian SUITE=stretch
   - DIST=ubuntu SUITE=bionic ALIAS=latest
-  - DIST=ubuntu SUITE=cosmic ALIAS=rolling
-  - DIST=ubuntu SUITE=disco ALIAS=devel
+  - DIST=ubuntu SUITE=cosmic
+  - DIST=ubuntu SUITE=disco ALIAS=rolling
+  - DIST=ubuntu SUITE=eoan ALIAS=devel
   - DIST=ubuntu SUITE=trusty
   - DIST=ubuntu SUITE=xenial
 
