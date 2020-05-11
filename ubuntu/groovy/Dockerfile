@@ -1,4 +1,4 @@
-FROM ubuntu:disco
+FROM ubuntu:groovy
 
 MAINTAINER vicamo@gmail.com
 

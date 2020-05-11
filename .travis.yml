@@ -12,11 +12,10 @@ env:
   - DIST=debian SUITE=jessie
   - DIST=debian SUITE=sid
   - DIST=debian SUITE=stretch
-  - DIST=ubuntu SUITE=bionic ALIAS=latest
-  - DIST=ubuntu SUITE=cosmic
-  - DIST=ubuntu SUITE=disco
-  - DIST=ubuntu SUITE=eoan ALIAS=rolling
-  - DIST=ubuntu SUITE=focal ALIAS=devel
+  - DIST=ubuntu SUITE=bionic
+  - DIST=ubuntu SUITE=eoan
+  - DIST=ubuntu SUITE=focal ALIASES="latest rolling"
+  - DIST=ubuntu SUITE=groovy ALIASES=devel
   - DIST=ubuntu SUITE=trusty
   - DIST=ubuntu SUITE=xenial
 
@@ -28,10 +27,12 @@ script:
   - docker build -t ${DOCKER_USER}/binfmt-qemu:$SUITE $DIST/$SUITE
   - if [ $DIST = "debian" ]; then
       RELEASE_URL=https://deb.debian.org/debian/dists/${SUITE}/Release;
-      ALIAS=$(wget --quiet -O - ${RELEASE_URL} | grep ^Suite | cut -d ' ' -f2);
+      ALIASES=$(wget --quiet -O - ${RELEASE_URL} | grep ^Suite | cut -d ' ' -f2);
     fi;
-    if [ -n "$ALIAS" ]; then
-      docker tag ${DOCKER_USER}/binfmt-qemu:$SUITE ${DOCKER_USER}/binfmt-qemu:$ALIAS;
+    if [ -n "$ALIASES" ]; then
+      for alias in $ALIASES; do
+        docker tag ${DOCKER_USER}/binfmt-qemu:$SUITE ${DOCKER_USER}/binfmt-qemu:$alias;
+      done
     fi;
     docker images;
   - ls -al /proc/sys/fs/binfmt_misc
