@@ -38,6 +38,7 @@ script:
   - ls -al /proc/sys/fs/binfmt_misc
   - docker run --rm --privileged ${DOCKER_USER}/binfmt-qemu:$SUITE
   - sudo update-binfmts --display
+  - ls -al /proc/sys/fs/binfmt_misc/qemu-*
 
 after_script:
 - if [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then

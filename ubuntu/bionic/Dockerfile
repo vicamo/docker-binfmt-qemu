@@ -9,4 +9,4 @@ RUN apt-get update \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*_dists_*
 
-ENTRYPOINT ["dpkg-reconfigure", "qemu-user-static"]
+ENTRYPOINT ["sh", "-c", "update-binfmts --enable && dpkg-reconfigure qemu-user-static"]
