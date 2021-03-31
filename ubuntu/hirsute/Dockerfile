@@ -1,4 +1,4 @@
-FROM ubuntu:eoan
+FROM ubuntu:hirsute
 
 MAINTAINER vicamo@gmail.com
 
