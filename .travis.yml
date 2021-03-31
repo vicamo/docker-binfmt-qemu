@@ -13,7 +13,6 @@ env:
   - DIST=debian SUITE=sid
   - DIST=debian SUITE=stretch
   - DIST=ubuntu SUITE=bionic
-  - DIST=ubuntu SUITE=eoan
   - DIST=ubuntu SUITE=focal ALIASES=latest
   - DIST=ubuntu SUITE=groovy ALIASES=rolling
   - DIST=ubuntu SUITE=hirsute ALIASES=devel
