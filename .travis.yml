@@ -14,8 +14,9 @@ env:
   - DIST=debian SUITE=stretch
   - DIST=ubuntu SUITE=bionic
   - DIST=ubuntu SUITE=focal ALIASES=latest
-  - DIST=ubuntu SUITE=groovy ALIASES=rolling
-  - DIST=ubuntu SUITE=hirsute ALIASES=devel
+  - DIST=ubuntu SUITE=groovy
+  - DIST=ubuntu SUITE=hirsute ALIASES=rolling
+  - DIST=ubuntu SUITE=impish ALIASES=devel
   - DIST=ubuntu SUITE=trusty
   - DIST=ubuntu SUITE=xenial
 
